@@ -35,5 +35,6 @@ struct RetirmentCalculatorApp: App {
     
     init () {
         AppCenter.start(withAppSecret: "e6400890-b85f-4ed8-af9b-eeefea0e70b4", services: [Crashes.self, Analytics.self])
+        Analytics.trackEvent("App_initialize_success")
     }
 }
