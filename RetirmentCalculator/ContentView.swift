@@ -7,11 +7,13 @@
 
 import SwiftUI
 import SwiftData
+import AppCenterCrashes
+import AppCenterAnalytics
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
-
+    @State private var showAlert = Crashes.hasCrashedInLastSession
     var body: some View {
         NavigationSplitView {
             List {
@@ -29,13 +31,20 @@ struct ContentView: View {
                     EditButton()
                 }
                 ToolbarItem {
-                    Button(action: addItem) {
+                 
+                    Button(action: {
+//                        Crashes.generateTestCrash()
+                        addItem()
+                    }, label: {
                         Label("Add Item", systemImage: "plus")
-                    }
+
+                    })
                 }
             }
         } detail: {
             Text("Select an item")
+        }.onChange(of: showAlert) {
+            Alert(title: Text("Oopss"), message: Text("Session Time Out"), dismissButton: .cancel())
         }
     }
 
@@ -43,6 +52,13 @@ struct ContentView: View {
         withAnimation {
             let newItem = Item(timestamp: Date())
             modelContext.insert(newItem)
+            let timestamp = newItem.timestamp.timeIntervalSince1970
+            let itemId: String = String(newItem.persistentModelID.entityName)
+            
+            let properties = ["timestamp": String(timestamp),
+                              "ID": String(itemId)]
+            Analytics.trackEvent("calculate_retirement_amount", withProperties: properties )
+
         }
     }
 
