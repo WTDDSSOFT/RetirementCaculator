@@ -7,6 +7,9 @@
 
 import SwiftUI
 import SwiftData
+import AppCenter
+import AppCenterCrashes
+import AppCenterAnalytics
 
 @main
 struct RetirmentCalculatorApp: App {
@@ -28,5 +31,9 @@ struct RetirmentCalculatorApp: App {
             ContentView()
         }
         .modelContainer(sharedModelContainer)
+    }
+    
+    init () {
+        AppCenter.start(withAppSecret: "e6400890-b85f-4ed8-af9b-eeefea0e70b4", services: [Crashes.self, Analytics.self])
     }
 }
